@@ -49,7 +49,6 @@
         #keyboard button:disabled {
             background: #ddd;
             cursor: not-allowed;
-            opacity: 80%;
         }
 
         .incorrect {
@@ -100,11 +99,24 @@
             font-size: 16px;
             cursor: pointer;
         }
+
+        #word-length {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Hangman Game</h1>
+        <div id="word-length">
+            <label for="length-select">Choose word length:</label>
+            <select id="length-select">
+                <option value="5">Easy</option>
+                <option value="6">Medium</option>
+                <option value="7">Hard</option>
+            </select>
+            <button id="start-game">Start Game</button>
+        </div>
         <div id="word"></div>
         <div id="message"></div>
         <div id="wrong-letters"></div>
@@ -127,7 +139,7 @@
             'algorithm', 'function', 'variable', 'object', 'array', 
             'database', 'network', 'security', 'encryption', 'authentication'
         ];
-        let selectedWord = words[Math.floor(Math.random() * words.length)];
+        let selectedWord = '';
         let correctLetters = [];
         let wrongLetters = [];
 
@@ -137,6 +149,8 @@
         const restartButton = document.getElementById('restart');
         const keyboardElement = document.getElementById('keyboard');
         const hangmanParts = document.querySelectorAll('.part');
+        const lengthSelect = document.getElementById('length-select');
+        const startGameButton = document.getElementById('start-game');
 
         // alphabet buttons
         const alphabet = 'abcdefghijklmnopqrstuvwxyz';
@@ -145,6 +159,23 @@
             button.textContent = letter;
             button.addEventListener('click', () => handleGuess(letter, button));
             keyboardElement.appendChild(button);
+        });
+
+        // Start game with selected word length
+        startGameButton.addEventListener('click', () => {
+            const wordLength = parseInt(lengthSelect.value);
+            const filteredWords = words.filter(word => word.length === wordLength);
+            selectedWord = filteredWords[Math.floor(Math.random() * filteredWords.length)];
+            correctLetters = [];
+            wrongLetters = [];
+            messageElement.textContent = '';
+            wrongLettersElement.textContent = '';
+            hangmanParts.forEach(part => (part.style.display = 'none'));
+            displayWord();
+            keyboardElement.querySelectorAll('button').forEach(button => {
+                button.disabled = false;
+                button.classList.remove('incorrect');
+            });
         });
 
         // Update word display
@@ -188,7 +219,9 @@
 
         // Restart game
         restartButton.addEventListener('click', () => {
-            selectedWord = words[Math.floor(Math.random() * words.length)];
+            const wordLength = parseInt(lengthSelect.value);
+            const filteredWords = words.filter(word => word.length === wordLength);
+            selectedWord = filteredWords[Math.floor(Math.random() * filteredWords.length)];
             correctLetters = [];
             wrongLetters = [];
             messageElement.textContent = '';
