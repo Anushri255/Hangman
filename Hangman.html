@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -105,7 +104,7 @@ h1 {
         <div id="message"></div>
         <div id="wrong-letters"></div>
         <div id="keyboard">
-            <!-- Alphabet buttons - add here -->
+            <!-- Alphabet buttons will be generated here -->
         </div>
         <div id="hangman">
             <div class="part" id="head"></div>
@@ -117,6 +116,84 @@ h1 {
         </div>
         <button id="restart">Restart</button>
     </div>
-    <script src="script.js"></script>
+    <script>
+        const words = ['javascript', 'hangman', 'coding', 'developer', 'programming'];
+let selectedWord = words[Math.floor(Math.random() * words.length)];
+let correctLetters = [];
+let wrongLetters = [];
+
+const wordElement = document.getElementById('word');
+const messageElement = document.getElementById('message');
+const wrongLettersElement = document.getElementById('wrong-letters');
+const restartButton = document.getElementById('restart');
+const keyboardElement = document.getElementById('keyboard');
+const hangmanParts = document.querySelectorAll('.part');
+
+// alphabet buttons
+const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+alphabet.split('').forEach(letter => {
+    const button = document.createElement('button');
+    button.textContent = letter;
+    button.addEventListener('click', () => handleGuess(letter));
+    keyboardElement.appendChild(button);
+});
+
+//  word display
+function displayWord() {
+    wordElement.innerHTML = selectedWord
+        .split('')
+        .map(letter => (correctLetters.includes(letter) ? letter : '_'))
+        .join(' ');
+}
+
+// Handle letter guess
+function handleGuess(letter) {
+    if (selectedWord.includes(letter)) {
+        if (!correctLetters.includes(letter)) {
+            correctLetters.push(letter);
+            displayWord();
+        }
+    } else {
+        if (!wrongLetters.includes(letter)) {
+            wrongLetters.push(letter);
+            wrongLettersElement.textContent = `Wrong letters: ${wrongLetters.join(', ')}`;
+            hangmanParts[wrongLetters.length - 1].style.display = 'block';
+        }
+    }
+
+    
+    if (correctLetters.length === new Set(selectedWord).size) {
+        messageElement.textContent = 'Congratulations! You won!';
+        disableKeyboard();
+    } else if (wrongLetters.length === hangmanParts.length) {
+        messageElement.textContent = `Game Over! The word was ${selectedWord}`;
+        disableKeyboard();
+    }
+}
+
+function disableKeyboard() {
+    keyboardElement.querySelectorAll('button').forEach(button => {
+        button.disabled = true;
+    });
+}
+
+// Restart game
+restartButton.addEventListener('click', () => {
+    selectedWord = words[Math.floor(Math.random() * words.length)];
+    correctLetters = [];
+    wrongLetters = [];
+    messageElement.textContent = '';
+    wrongLettersElement.textContent = '';
+    hangmanParts.forEach(part => (part.style.display = 'none'));
+    displayWord();
+    keyboardElement.querySelectorAll('button').forEach(button => {
+        button.disabled = false;
+    });
+});
+
+displayWord();
+
+
+    </script>
 </body>
 </html>
