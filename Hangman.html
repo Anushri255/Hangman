@@ -49,6 +49,12 @@
         #keyboard button:disabled {
             background: #ddd;
             cursor: not-allowed;
+            opacity: 80%;
+        }
+
+        .incorrect {
+            background: #f99;
+            color: white;
         }
 
         #hangman {
@@ -137,7 +143,7 @@
         alphabet.split('').forEach(letter => {
             const button = document.createElement('button');
             button.textContent = letter;
-            button.addEventListener('click', () => handleGuess(letter));
+            button.addEventListener('click', () => handleGuess(letter, button));
             keyboardElement.appendChild(button);
         });
 
@@ -150,7 +156,7 @@
         }
 
         // Handle letter guess
-        function handleGuess(letter) {
+        function handleGuess(letter, button) {
             if (selectedWord.includes(letter)) {
                 if (!correctLetters.includes(letter)) {
                     correctLetters.push(letter);
@@ -161,6 +167,7 @@
                     wrongLetters.push(letter);
                     wrongLettersElement.textContent = `Wrong letters: ${wrongLetters.join(', ')}`;
                     hangmanParts[wrongLetters.length - 1].style.display = 'block';
+                    button.classList.add('incorrect');
                 }
             }
 
@@ -190,6 +197,7 @@
             displayWord();
             keyboardElement.querySelectorAll('button').forEach(button => {
                 button.disabled = false;
+                button.classList.remove('incorrect');
             });
         });
 
