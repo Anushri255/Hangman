@@ -6,95 +6,94 @@
     <title>Hangman Game</title>
     <style>
         body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    text-align: center;
-    padding: 20px;
-}
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
 
-.container {
-    max-width: 600px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-h1 {
-    margin-bottom: 20px;
-}
+        h1 {
+            margin-bottom: 20px;
+        }
 
-#word {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
+        #word {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
 
-#message {
-    color: red;
-    font-size: 20px;
-    margin-bottom: 20px;
-}
+        #message {
+            color: red;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
 
-#wrong-letters {
-    margin-bottom: 20px;
-}
+        #wrong-letters {
+            margin-bottom: 20px;
+        }
 
-#keyboard button {
-    font-size: 20px;
-    margin: 5px;
-    padding: 10px;
-    cursor: pointer;
-}
+        #keyboard button {
+            font-size: 20px;
+            margin: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
 
-#keyboard button:disabled {
-    background: #ddd;
-    cursor: not-allowed;
-}
+        #keyboard button:disabled {
+            background: #ddd;
+            cursor: not-allowed;
+        }
 
-#hangman {
-    margin-top: 20px;
-}
+        #hangman {
+            margin-top: 20px;
+        }
 
-.part {
-    display: none;
-    width: 10px;
-    height: 10px;
-    background: black;
-}
+        .part {
+            display: none;
+            width: 10px;
+            height: 10px;
+            background: black;
+        }
 
-#head {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    margin: 10px auto;
-}
+        #head {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 10px auto;
+        }
 
-#body {
-    width: 10px;
-    height: 60px;
-    margin: 10px auto;
-}
+        #body {
+            width: 10px;
+            height: 60px;
+            margin: 10px auto;
+        }
 
-#left-arm,
-#right-arm {
-    width: 60px;
-    height: 10px;
-}
+        #left-arm,
+        #right-arm {
+            width: 60px;
+            height: 10px;
+        }
 
-#left-leg,
-#right-leg {
-    width: 60px;
-    height: 10px;
-    margin: 10px auto;
-}
+        #left-leg,
+        #right-leg {
+            width: 60px;
+            height: 10px;
+            margin: 10px auto;
+        }
 
-#restart {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
+        #restart {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -104,7 +103,6 @@ h1 {
         <div id="message"></div>
         <div id="wrong-letters"></div>
         <div id="keyboard">
-            <!-- Alphabet buttons will be generated here -->
         </div>
         <div id="hangman">
             <div class="part" id="head"></div>
@@ -117,83 +115,85 @@ h1 {
         <button id="restart">Restart</button>
     </div>
     <script>
-        const words = ['javascript', 'hangman', 'coding', 'developer', 'programming'];
-let selectedWord = words[Math.floor(Math.random() * words.length)];
-let correctLetters = [];
-let wrongLetters = [];
+        const words = [
+            'javascript', 'hangman', 'coding', 'developer', 'programming', 
+            'interface', 'application', 'software', 'hardware', 'framework', 
+            'algorithm', 'function', 'variable', 'object', 'array', 
+            'database', 'network', 'security', 'encryption', 'authentication'
+        ];
+        let selectedWord = words[Math.floor(Math.random() * words.length)];
+        let correctLetters = [];
+        let wrongLetters = [];
 
-const wordElement = document.getElementById('word');
-const messageElement = document.getElementById('message');
-const wrongLettersElement = document.getElementById('wrong-letters');
-const restartButton = document.getElementById('restart');
-const keyboardElement = document.getElementById('keyboard');
-const hangmanParts = document.querySelectorAll('.part');
+        const wordElement = document.getElementById('word');
+        const messageElement = document.getElementById('message');
+        const wrongLettersElement = document.getElementById('wrong-letters');
+        const restartButton = document.getElementById('restart');
+        const keyboardElement = document.getElementById('keyboard');
+        const hangmanParts = document.querySelectorAll('.part');
 
-// alphabet buttons
-const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-alphabet.split('').forEach(letter => {
-    const button = document.createElement('button');
-    button.textContent = letter;
-    button.addEventListener('click', () => handleGuess(letter));
-    keyboardElement.appendChild(button);
-});
+        // alphabet buttons
+        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+        alphabet.split('').forEach(letter => {
+            const button = document.createElement('button');
+            button.textContent = letter;
+            button.addEventListener('click', () => handleGuess(letter));
+            keyboardElement.appendChild(button);
+        });
 
-//  word display
-function displayWord() {
-    wordElement.innerHTML = selectedWord
-        .split('')
-        .map(letter => (correctLetters.includes(letter) ? letter : '_'))
-        .join(' ');
-}
+        // Update word display
+        function displayWord() {
+            wordElement.innerHTML = selectedWord
+                .split('')
+                .map(letter => (correctLetters.includes(letter) ? letter : '_'))
+                .join(' ');
+        }
 
-// Handle letter guess
-function handleGuess(letter) {
-    if (selectedWord.includes(letter)) {
-        if (!correctLetters.includes(letter)) {
-            correctLetters.push(letter);
+        // Handle letter guess
+        function handleGuess(letter) {
+            if (selectedWord.includes(letter)) {
+                if (!correctLetters.includes(letter)) {
+                    correctLetters.push(letter);
+                    displayWord();
+                }
+            } else {
+                if (!wrongLetters.includes(letter)) {
+                    wrongLetters.push(letter);
+                    wrongLettersElement.textContent = `Wrong letters: ${wrongLetters.join(', ')}`;
+                    hangmanParts[wrongLetters.length - 1].style.display = 'block';
+                }
+            }
+
+            if (correctLetters.length === new Set(selectedWord).size) {
+                messageElement.textContent = 'Congratulations! You won!';
+                disableKeyboard();
+            } else if (wrongLetters.length === hangmanParts.length) {
+                messageElement.textContent = `Game Over! The word was ${selectedWord}`;
+                disableKeyboard();
+            }
+        }
+
+        function disableKeyboard() {
+            keyboardElement.querySelectorAll('button').forEach(button => {
+                button.disabled = true;
+            });
+        }
+
+        // Restart game
+        restartButton.addEventListener('click', () => {
+            selectedWord = words[Math.floor(Math.random() * words.length)];
+            correctLetters = [];
+            wrongLetters = [];
+            messageElement.textContent = '';
+            wrongLettersElement.textContent = '';
+            hangmanParts.forEach(part => (part.style.display = 'none'));
             displayWord();
-        }
-    } else {
-        if (!wrongLetters.includes(letter)) {
-            wrongLetters.push(letter);
-            wrongLettersElement.textContent = `Wrong letters: ${wrongLetters.join(', ')}`;
-            hangmanParts[wrongLetters.length - 1].style.display = 'block';
-        }
-    }
+            keyboardElement.querySelectorAll('button').forEach(button => {
+                button.disabled = false;
+            });
+        });
 
-    
-    if (correctLetters.length === new Set(selectedWord).size) {
-        messageElement.textContent = 'Congratulations! You won!';
-        disableKeyboard();
-    } else if (wrongLetters.length === hangmanParts.length) {
-        messageElement.textContent = `Game Over! The word was ${selectedWord}`;
-        disableKeyboard();
-    }
-}
-
-function disableKeyboard() {
-    keyboardElement.querySelectorAll('button').forEach(button => {
-        button.disabled = true;
-    });
-}
-
-// Restart game
-restartButton.addEventListener('click', () => {
-    selectedWord = words[Math.floor(Math.random() * words.length)];
-    correctLetters = [];
-    wrongLetters = [];
-    messageElement.textContent = '';
-    wrongLettersElement.textContent = '';
-    hangmanParts.forEach(part => (part.style.display = 'none'));
-    displayWord();
-    keyboardElement.querySelectorAll('button').forEach(button => {
-        button.disabled = false;
-    });
-});
-
-displayWord();
-
-
+        displayWord();
     </script>
 </body>
 </html>
